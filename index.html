@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy Birthday P'Lita</title>
+  <meta name="description" content="A classic iPod-style birthday music player for P'Lita" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,.26), transparent 26%),
+        radial-gradient(circle at 82% 28%, rgba(255,206,225,.40), transparent 30%),
+        linear-gradient(135deg, #efeff3 0%, #d8dbe2 42%, #b7bbc6 100%);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #101014;
+    }
+    .page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 34px 18px;
+      overflow: hidden;
+      position: relative;
+    }
+    .music-note {
+      position: absolute;
+      font-size: clamp(22px, 5vw, 54px);
+      opacity: .22;
+      animation: float 9s ease-in-out infinite;
+      user-select: none;
+    }
+    .note-1 { left: 8%; top: 14%; animation-delay: 0s; }
+    .note-2 { right: 10%; top: 18%; animation-delay: 1.2s; }
+    .note-3 { left: 12%; bottom: 18%; animation-delay: 2.1s; }
+    .note-4 { right: 13%; bottom: 16%; animation-delay: 3.2s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-8deg); }
+      50% { transform: translateY(-26px) rotate(8deg); }
+    }
+    .ipod {
+      width: min(410px, 94vw);
+      border-radius: 42px;
+      padding: 22px 22px 30px;
+      background: linear-gradient(145deg, rgba(255,255,255,.95), rgba(218,220,226,.95)), #f7f7f8;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 -18px 40px rgba(0,0,0,.05), 0 34px 70px rgba(45,45,65,.35);
+      position: relative;
+    }
+    .ipod::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 33px;
+      border: 1px solid rgba(255,255,255,.8);
+      pointer-events: none;
+    }
+    .screen {
+      height: 330px;
+      border-radius: 17px;
+      overflow: hidden;
+      background: #eef2f6;
+      border: 4px solid #141416;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.3), inset 0 0 28px rgba(0,0,0,.12);
+      position: relative;
+    }
+    .status {
+      height: 25px;
+      background: linear-gradient(#fafafa, #d7dce4);
+      border-bottom: 1px solid rgba(0,0,0,.22);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 9px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .battery {
+      width: 25px; height: 11px;
+      border: 1.8px solid #111;
+      border-radius: 2px;
+      position: relative;
+    }
+    .battery::before {
+      content: "";
+      position: absolute;
+      right: -4px; top: 3px;
+      width: 3px; height: 5px;
+      background: #111;
+      border-radius: 0 2px 2px 0;
+    }
+    .battery::after {
+      content: "";
+      position: absolute;
+      inset: 2px 7px 2px 2px;
+      background: #3cb371;
+    }
+    .screen-body {
+      height: calc(100% - 25px);
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      background: linear-gradient(90deg, #f7f8fa 0%, #edf0f5 100%);
+    }
+    .menu-panel { border-right: 1px solid rgba(0,0,0,.18); padding: 12px 0; }
+    .menu-title { font-size: 21px; font-weight: 800; padding: 0 14px 8px; letter-spacing: -.6px; }
+    .menu-item {
+      padding: 7px 12px;
+      font-size: 14px;
+      font-weight: 650;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .menu-item.active { color: white; background: linear-gradient(#5a96dc, #1766c5); }
+    .now-playing { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .album {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #151515;
+      box-shadow: 0 9px 20px rgba(0,0,0,.22);
+    }
+    .album img { width: 100%; height: 100%; object-fit: cover; transition: opacity .35s ease; }
+    .track-title { font-weight: 850; font-size: 18px; line-height: 1.05; letter-spacing: -.3px; }
+    .artist { color: #626671; font-size: 13px; font-weight: 650; }
+    .progress { margin-top: auto; }
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #555b66;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .bar { height: 7px; border-radius: 999px; background: rgba(0,0,0,.16); overflow: hidden; }
+    .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #5a96dc, #1766c5); border-radius: inherit; }
+    .message {
+      position: absolute;
+      left: 13px; right: 13px; bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.86);
+      backdrop-filter: blur(10px);
+      font-size: 12.5px;
+      line-height: 1.35;
+      box-shadow: 0 5px 18px rgba(0,0,0,.16);
+    }
+    .wheel-wrap { display: grid; place-items: center; padding-top: 30px; }
+    .wheel {
+      width: 235px; height: 235px;
+      border-radius: 50%;
+      position: relative;
+      background: radial-gradient(circle at 33% 25%, rgba(255,255,255,.95), rgba(255,255,255,.25) 25%, transparent 42%), linear-gradient(145deg, #f9f9fb, #d4d6dd);
+      box-shadow: inset 0 1px 6px rgba(255,255,255,.8), inset 0 -12px 24px rgba(0,0,0,.08), 0 13px 28px rgba(0,0,0,.18);
+    }
+    .center-button {
+      position: absolute;
+      inset: 72px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(145deg, #d9dbe2, #f9f9fb);
+      box-shadow: inset 0 4px 10px rgba(255,255,255,.8), inset 0 -5px 12px rgba(0,0,0,.08);
+      cursor: pointer;
+      font-weight: 900;
+      color: #363944;
+      letter-spacing: -.5px;
+    }
+    .center-button:active { transform: scale(.98); }
+    .wheel-label {
+      position: absolute;
+      color: #858996;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .4px;
+      user-select: none;
+    }
+    .label-menu { top: 23px; left: 50%; transform: translateX(-50%); }
+    .label-prev { left: 28px; top: 50%; transform: translateY(-50%); }
+    .label-next { right: 28px; top: 50%; transform: translateY(-50%); }
+    .label-play { bottom: 23px; left: 50%; transform: translateX(-50%); }
+    .caption {
+      margin-top: 18px;
+      text-align: center;
+      color: rgba(20,20,24,.68);
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .confetti { pointer-events: none; position: fixed; inset: 0; overflow: hidden; }
+    .confetti span {
+      position: absolute;
+      top: -20px;
+      width: 9px;
+      height: 14px;
+      border-radius: 3px;
+      background: hsl(var(--hue), 90%, 64%);
+      left: var(--x);
+      animation: fall var(--duration) linear infinite;
+      animation-delay: var(--delay);
+      opacity: .84;
+    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+    @media (max-width: 430px) {
+      .screen { height: 315px; }
+      .screen-body { grid-template-columns: .92fr 1.08fr; }
+      .wheel { width: 218px; height: 218px; }
+      .center-button { inset: 67px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="music-note note-1">♪</div>
+    <div class="music-note note-2">♫</div>
+    <div class="music-note note-3">♬</div>
+    <div class="music-note note-4">♩</div>
+
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+    <section class="ipod" aria-label="Classic iPod birthday player">
+      <div class="screen">
+        <div class="status">
+          <span id="statusText">Birthday iPod</span>
+          <span>12:00</span>
+          <span class="battery"></span>
+        </div>
+
+        <div class="screen-body">
+          <aside class="menu-panel">
+            <div class="menu-title">Music</div>
+            <div class="menu-item active"><span>Now Playing</span><span>›</span></div>
+            <div class="menu-item"><span>Birthday Songs</span><span>›</span></div>
+            <div class="menu-item"><span>For P'Lita</span><span>›</span></div>
+            <div class="menu-item"><span>Memories</span><span>›</span></div>
+            <div class="menu-item"><span>Best Wishes</span><span>›</span></div>
+          </aside>
+
+          <section class="now-playing">
+            <div class="album">
+              <img id="albumPhoto" src="plita-1.jpg" alt="Birthday portrait">
+            </div>
+
+            <div>
+              <div class="track-title">Happy Birthday, P'Lita</div>
+              <div class="artist">A little song just for you</div>
+            </div>
+
+            <div class="progress">
+              <div class="progress-row">
+                <span id="currentTime">0:00</span>
+                <span>0:22</span>
+              </div>
+              <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="message">
+          Wishing you a birthday filled with happiness, beautiful music, warm smiles, and every good thing you deserve. 🎂
+        </div>
+      </div>
+
+      <div class="wheel-wrap">
+        <div class="wheel">
+          <div class="wheel-label label-menu">MENU</div>
+          <div class="wheel-label label-prev">◀◀</div>
+          <div class="wheel-label label-next">▶▶</div>
+          <div class="wheel-label label-play">▶❚❚</div>
+          <button class="center-button" id="playButton">PLAY</button>
+        </div>
+      </div>
+
+      <div class="caption">Press PLAY to hear the birthday melody.</div>
+    </section>
+  </main>
+
+  <script>
+    const notes = [
+      ["G4", .38], ["G4", .18], ["A4", .55], ["G4", .55], ["C5", .55], ["B4", .95],
+      ["G4", .38], ["G4", .18], ["A4", .55], ["G4", .55], ["D5", .55], ["C5", .95],
+      ["G4", .38], ["G4", .18], ["G5", .55], ["E5", .55], ["C5", .55], ["B4", .55], ["A4", .95],
+      ["F5", .38], ["F5", .18], ["E5", .55], ["C5", .55], ["D5", .55], ["C5", 1.2],
+    ];
+
+    const frequency = {
+      G4: 392.0,
+      A4: 440.0,
+      B4: 493.88,
+      C5: 523.25,
+      D5: 587.33,
+      E5: 659.25,
+      F5: 698.46,
+      G5: 783.99,
+    };
+
+    let audioContext = null;
+    let timer = null;
+    let photoIndex = 0;
+
+    const totalDuration = notes.reduce((sum, item) => sum + item[1], 0) + notes.length * .045;
+    const button = document.getElementById("playButton");
+    const statusText = document.getElementById("statusText");
+    const barFill = document.getElementById("barFill");
+    const currentTime = document.getElementById("currentTime");
+    const albumPhoto = document.getElementById("albumPhoto");
+
+    function playTone(ctx, destination, note, start, duration) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+
+      osc.type = "triangle";
+      osc.frequency.value = frequency[note];
+
+      filter.type = "lowpass";
+      filter.frequency.value = 1600;
+
+      gain.gain.setValueAtTime(.0001, start);
+      gain.gain.exponentialRampToValueAtTime(.18, start + .025);
+      gain.gain.exponentialRampToValueAtTime(.0001, start + duration * .92);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(destination);
+
+      osc.start(start);
+      osc.stop(start + duration);
+    }
+
+    function stopExisting() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+      if (audioContext) {
+        audioContext.close();
+        audioContext = null;
+      }
+    }
+
+    function playHappyBirthday() {
+      stopExisting();
+
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioContext();
+      audioContext = ctx;
+
+      const master = ctx.createGain();
+      const delay = ctx.createDelay();
+      const feedback = ctx.createGain();
+
+      master.gain.value = .72;
+      delay.delayTime.value = .16;
+      feedback.gain.value = .16;
+
+      master.connect(ctx.destination);
+      master.connect(delay);
+      delay.connect(feedback);
+      feedback.connect(delay);
+      delay.connect(ctx.destination);
+
+      let cursor = ctx.currentTime + .08;
+      notes.forEach(([note, duration]) => {
+        playTone(ctx, master, note, cursor, duration);
+        cursor += duration + .045;
+      });
+
+      button.textContent = "PLAYING";
+      statusText.textContent = "▶ Playing";
+      barFill.style.width = "0%";
+      currentTime.textContent = "0:00";
+
+      const start = Date.now();
+      timer = setInterval(() => {
+        const elapsed = (Date.now() - start) / 1000;
+        const value = Math.min((elapsed / totalDuration) * 100, 100);
+        barFill.style.width = value + "%";
+        currentTime.textContent = "0:" + String(Math.min(Math.floor(elapsed), 22)).padStart(2, "0");
+
+        if (value >= 100) {
+          clearInterval(timer);
+          timer = null;
+          button.textContent = "PLAY";
+          statusText.textContent = "Birthday iPod";
+        }
+      }, 100);
+    }
+
+    button.addEventListener("click", playHappyBirthday);
+
+    setInterval(() => {
+      photoIndex = (photoIndex + 1) % 2;
+      albumPhoto.style.opacity = .15;
+      setTimeout(() => {
+        albumPhoto.src = photoIndex === 0 ? "plita-1.jpg" : "plita-2.jpg";
+        albumPhoto.style.opacity = 1;
+      }, 180);
+    }, 2600);
+
+    const confetti = document.getElementById("confetti");
+    for (let i = 0; i < 46; i++) {
+      const piece = document.createElement("span");
+      piece.style.setProperty("--x", ((i * 17) % 100) + "%");
+      piece.style.setProperty("--hue", (i * 47) % 360);
+      piece.style.setProperty("--duration", (4 + (i % 6) * .45) + "s");
+      piece.style.setProperty("--delay", (-(i % 13) * .33) + "s");
+      confetti.appendChild(piece);
+    }
+  </script>
+</body>
+</html>
