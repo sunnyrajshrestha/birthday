@@ -1,9 +1,0 @@
-{
-  "scripts": {
-    "build": "echo Static site ready",
-    "start": "npx serve ."
-  },
-  "dependencies": {
-    "serve": "latest"
-  }
-}
