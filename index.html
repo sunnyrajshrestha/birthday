@@ -229,10 +229,10 @@
           <aside class="menu-panel">
             <div class="menu-title">Music</div>
             <div class="menu-item active"><span>Now Playing</span><span>›</span></div>
-            <div class="menu-item"><span>Birthday Songs</span><span>›</span></div>
-            <div class="menu-item"><span>For P'Lita</span><span>›</span></div>
-            <div class="menu-item"><span>Memories</span><span>›</span></div>
-            <div class="menu-item"><span>Best Wishes</span><span>›</span></div>
+            <div class="menu-item"><span>Songs</span><span>›</span></div>
+            <div class="menu-item"><span>Shuffle</span><span>›</span></div>
+            <div class="menu-item"><span>Podcasts</span><span>›</span></div>
+            <div class="menu-item"><span>Artists</span><span>›</span></div>
           </aside>
 
           <section class="now-playing">
@@ -241,8 +241,8 @@
             </div>
 
             <div>
-              <div class="track-title">Happy Birthday, P'Lita</div>
-              <div class="artist">A little song just for you</div>
+              <div class="track-title">Happy Birthday!</div>
+              <div class="artist">To P'Lita! :)</div>
             </div>
 
             <div class="progress">
@@ -379,7 +379,7 @@
           clearInterval(timer);
           timer = null;
           button.textContent = "PLAY";
-          statusText.textContent = "Birthday iPod";
+          statusText.textContent = "Birthday girl!";
         }
       }, 100);
     }
@@ -387,10 +387,10 @@
     button.addEventListener("click", playHappyBirthday);
 
     setInterval(() => {
-      photoIndex = (photoIndex + 1) % 6;
+      photoIndex = (photoIndex + 1) % 7;
       albumPhoto.style.opacity = .15;
       setTimeout(() => {
-        albumPhoto.src = ["plita-1.jpg", "plita-2.jpg", "plita-3.jpg", "plita-4.jpg", "plita-5.jpg", "plita-6.jpg"][photoIndex];
+        albumPhoto.src = ["plita-1.jpg", "plita-2.jpg", "plita-3.jpg", "plita-4.jpg", "plita-5.jpg", "plita-6.jpg", "plita-7.jpg"][photoIndex];
         albumPhoto.style.opacity = 1;
       }, 180);
     }, 2600);
