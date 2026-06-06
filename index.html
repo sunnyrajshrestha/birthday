@@ -387,10 +387,10 @@
     button.addEventListener("click", playHappyBirthday);
 
     setInterval(() => {
-      photoIndex = (photoIndex + 1) % 2;
+      photoIndex = (photoIndex + 1) % 6;
       albumPhoto.style.opacity = .15;
       setTimeout(() => {
-        albumPhoto.src = photoIndex === 0 ? "plita-1.jpg" : "plita-2.jpg";
+        albumPhoto.src = ["plita-1.jpg", "plita-2.jpg", "plita-3.jpg", "plita-4.jpg", "plita-5.jpg", "plita-6.jpg"][photoIndex];
         albumPhoto.style.opacity = 1;
       }, 180);
     }, 2600);
