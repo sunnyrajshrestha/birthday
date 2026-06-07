@@ -221,7 +221,7 @@
       <div class="screen">
         <div class="status">
           <span id="statusText">Birthday iPod</span>
-          <span>12:00</span>
+          <span>{new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Bangkok", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date())}</span>
           <span class="battery"></span>
         </div>
 
