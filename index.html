@@ -221,7 +221,7 @@
       <div class="screen">
         <div class="status">
           <span id="statusText">Birthday iPod</span>
-          <span>{new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Bangkok", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date())}</span>
+          <span id="bkkTime">12:00</span>
           <span class="battery"></span>
         </div>
 
@@ -271,6 +271,13 @@
       <div class="caption">Press PLAY to hear the birthday melody.</div>
     </section>
   </main>
+  document.getElementById("bkkTime").textContent =
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Bangkok",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).format(new Date());
 
   <script>
     const notes = [
@@ -404,6 +411,7 @@
       piece.style.setProperty("--delay", (-(i % 13) * .33) + "s");
       confetti.appendChild(piece);
     }
+    
   </script>
 </body>
 </html>
